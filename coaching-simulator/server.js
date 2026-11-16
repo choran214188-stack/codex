@@ -90,7 +90,7 @@ async function api(req,res,endpoint) {
       if (!history.some(x => x.role === 'leader')) throw Error('먼저 대화를 입력해주세요.');
       const instructions = '당신은 팀장 교육을 위한 코칭 대화 평가자다. 다음 6개 영역을 0~100점으로 평가한다: ' +
         JSON.stringify(rubric) + '. 실제 팀장의 발언만 근거로 판단한다. 없는 발화를 인용하지 않는다. 짧은 대화에는 근거 부족을 명시한다. 결과는 한국어이며, JSON 객체로만 반환한다. 필수 키: scores(rapport,empathy,explore,feedback,autonomy,action 각각 숫자), summary(문자열), strengths(문자열 배열), improvements(문자열 배열), questions(문자열 배열). 실제 대화 인용과 구체적인 개선안을 포함하라.';
-      const transcript = '페르소나: ' + JSON.stringify(profile) + '\n대화:\n' + history.map(x => (x.role==='leader'?'팀장: ':'구성원: ') + x.text).join('\n');
+      const transcript = 'Return ONLY a valid json object with scores, summary, strengths, improvements, and questions.\n페르소나: ' + JSON.stringify(profile) + '\n대화:\n' + history.map(x => (x.role==='leader'?'팀장: ':'구성원: ') + x.text).join('\n');
       const parsed = JSON.parse(await openAI(instructions,[{role:'user',content:transcript}],1200,true));
       const scores = {};
       for (const key of Object.keys(rubric)) {
